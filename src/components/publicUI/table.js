@@ -104,7 +104,7 @@ const CustomTable = React.forwardRef(({ url, columns, crumbs, searchForm, render
   return (
     <div>
       {/* 自定义列表crumbs ，传值crumbs */}
-      <FixHeader />
+      <FixHeader  />
       {/* 搜索栏 */}
       {searchForm && (
         <div

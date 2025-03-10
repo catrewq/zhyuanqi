@@ -72,15 +72,15 @@
 // export default App;
 
 
+import { Spin } from 'antd';
 import Cookies from 'js-cookie';
 import React, { Suspense, useEffect, useState } from "react";
 import { BrowserRouter } from 'react-router-dom';
-import axios from "./utils/axios";
-import MyContext from "./utils/context";
-import { Spin } from "antd";
+import { menuData } from "./mock/mockMenu";
 import Launcher from "./pages/launcher";
 import "./styles/App.less";
-import { menuData } from "./mock/mockMenu";
+import MyContext from "./utils/context";
+
 const Container = React.lazy(() => import("./layouts/Container"));
 
 const App = () => {

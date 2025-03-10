@@ -1,7 +1,8 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import Pics from './pics';
 import List from './list';
+import Pics from './pics';
+// 注释
 
 import './index.less';
 
@@ -13,13 +14,15 @@ const CLASS_NAME = "BaseData";
 
 const PICS_LIST = "pics"
 const PIC_LIST = "list";
-
-
+// 注释
+const PI_LIST = "pi"
 
 export const children: TabRouteConfig[] = (
   [
     { path: PICS_LIST, title: "商品照片展示", element: pics(), isTabRouter: false, className: CLASS_NAME },
     { path: PIC_LIST, title: "巡检单列表", element: list(), isTabRouter: false, className: CLASS_NAME },
+    // 注释
+    //{ path: PI_LIST, title: "商品", element: pi(), isTabRouter: false, className: CLASS_NAME },
 
 
   ]

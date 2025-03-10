@@ -41,25 +41,25 @@ function Container() {
   const siderRef: any = useRef(null);
 
   const handleSiderRefClick = (path: string, callback: (items: Tab[] | undefined) => void) => {
-    // if (tabsRef.current) {
-    //   tabsRef.current.addTabMenuBySider(path, callback);
-    // }
-    // else {
-    navigate(path);
-    //}
+    if (tabsRef.current) {
+      tabsRef.current.addTabMenuBySider(path, callback);
+    }
+    else {
+      navigate(path);
+    }
 
   };
 
   const handleMenuTabChange = (tabs: Tab[] | undefined) => {
-    // if (tabsRef.current) {
-    //   siderRef.current.refreshMenuByTabChange(tabs);
-    // }
+    if (tabsRef.current) {
+      siderRef.current.refreshMenuByTabChange(tabs);
+    }
   };
 
   /**
    * @deprecated v1.4.1前兼容历史页面路由方式
-   * @param useOldRoute 
-   * @returns 
+   * @param useOldRoute
+   * @returns
    */
   const MixRoute = ({ useOldRoute }: any) => {
 
@@ -93,3 +93,6 @@ function Container() {
 }
 
 export default Container;
+
+
+
