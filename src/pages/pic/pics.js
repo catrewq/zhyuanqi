@@ -5,6 +5,7 @@ import OssProxy from 'src/utils/OssProxyUtil';
 import { message } from 'antd';
 import FixHeader from 'src/layouts/FixHeader';
 import ReactPlayer from 'react-player';
+import { FileUnknownOutlined } from '@ant-design/icons';
 
 const PhotoGallery = () => {
   const [imagesData, setImagesData] = useState([]);
@@ -306,7 +307,7 @@ const PhotoGallery = () => {
     // 未知类型处理
     return (
       <div className="unknown-file">
-        <Icon type="file-unknown" />
+        <FileUnknownOutlined type="file-unknown" />
         <p>不支持的文件格式</p>
       </div>
     );
