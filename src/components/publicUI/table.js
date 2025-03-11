@@ -81,6 +81,7 @@ const CustomTable = React.forwardRef(({ url, columns, crumbs, searchForm, render
     if (!firstRender) {
       query();
     }
+    console.log(url);
     setFirstRender(false);
   }, [pages.page, pages.limit, firstRender]);
 
@@ -103,7 +104,7 @@ const CustomTable = React.forwardRef(({ url, columns, crumbs, searchForm, render
   return (
     <div>
       {/* 自定义列表crumbs ，传值crumbs */}
-      {/* <FixHeader crumbs={crumbs} /> */}
+      <FixHeader />
       {/* 搜索栏 */}
       {searchForm && (
         <div

@@ -196,6 +196,11 @@ const SiderMenuRef = React.forwardRef((refProp: { props: RefProps }, ref) => {
       setOpenKeys([location.pathname.split("/")[1]]);
     }
 
+    console.log(location.pathname);
+    const shouldCollapse = location.pathname.toLowerCase().includes('/pic/pics');
+    setIsCollapsedIs(shouldCollapse);
+    
+
   }, [location.pathname]);
 
   const handleButtonClick = (): void => {

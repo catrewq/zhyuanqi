@@ -1,14 +1,21 @@
 // import { message } from "antd";
 import axios from "axios";
 import qs from "qs";
+import Cookies from 'js-cookie';
+
 let contentType = "application/x-www-form-urlencoded;charset=UTF-8";
 
 axios.defaults.baseURL = process.env.REACT_APP_BASE_URL;
 axios.defaults.headers["Content-Type"] = contentType;
+
 axios.interceptors.request.use((config) => {
-  axios.defaults.headers.common["token"] = sessionStorage.getItem("token");
+  // 从 cookies 中获取 token 和 sessionId
+  const token = Cookies.get('token');
+  const sessionId = Cookies.get('sessionId');
+  
+  axios.defaults.headers.common["token"] = token;
   axios.defaults.headers.common["appId"] = 3;
-  const sessionId = sessionStorage.getItem("sessionId");
+
   if (sessionId) {
     config.headers.ssessionid = sessionId;
   }
@@ -24,29 +31,18 @@ axios.interceptors.request.use((config) => {
 axios.interceptors.response.use(
   (res) => {
     const { success, rtnMessage, rtnCode, message } = res.data;
-    // 如果是修改、删除、更新等涉及数据修改的请求，则从响应头中获取新的sessionId并存储
+    // 如果是修改、删除、更新等涉及数据修改的请求，则从响应头中获取新的 sessionId 并存储
     if (res.config.method !== 'get' && res.config.url !== 'system/account/user/login' && res.config.url !== '/tax/download/info/oss/token') {
       const newSessionId = res.headers["ssessionid"];
       if (newSessionId) {
-        sessionStorage.setItem("sessionId", newSessionId);
+        Cookies.set("sessionId", newSessionId, { expires: 7 });
       }
     }
 
-    if (message === "用户未登录") {
+    if (message === "用户未登录" || message === "登录过期，请重新登录" || rtnCode === -9999) {
       // refreshToken();
-      sessionStorage.clear();
-      window.location.href = "/";
-    }
-
-    if (message === "登录过期，请重新登录") {
-      console.log(message);
-      // refreshToken();
-      sessionStorage.clear();
-      window.location.href = "/";
-    }
-
-    if (rtnCode === -9999) {
-      sessionStorage.clear();
+      Cookies.remove('token');
+      Cookies.remove('sessionId');
       window.location.href = "/";
     }
 
@@ -66,7 +62,8 @@ axios.interceptors.response.use(
         return data.rtnCode === -9999;
       });
       if (shouldRedirect) {
-        sessionStorage.clear();
+        Cookies.remove('token');
+        Cookies.remove('sessionId');
         window.location.href = "/";
       }
     }
@@ -75,25 +72,12 @@ axios.interceptors.response.use(
       return res;
     }
 
-    // if (success) {
-    //   return res;
-    // } else {   
-    //   if (message === undefined) {
-    //     return res;
-    //   }
-    //   rtnMessage && alert(rtnMessage);
-
-    //   return res;
-    // }
-    // 要看其他的接口失败返回有没有问题
     if (success) {
       return res;
     } else {
       if (message !== undefined) {
-        // alert(message);
         console.log(message);
       }
-      // rtnMessage && alert(rtnMessage);
       console.log(rtnMessage);
       return res;
     }
@@ -160,3 +144,4 @@ axios.interceptors.response.use(
 );
 
 export default axios;
+

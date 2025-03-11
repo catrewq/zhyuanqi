@@ -3,10 +3,11 @@ import { Button, Form, Input, message, Modal, Space, Tooltip } from 'antd';
 import { useContext, useState } from 'react';
 import axios from "../utils/axios";
 import ContainerContext from '../utils/context';
+import Cookies from 'js-cookie'; // 导入 js-cookie 库
+
 function User() {
   const [form] = Form.useForm();
-  const { account } = useContext(ContainerContext);
-
+  const { account, setMenu, setAccount, setLogged } = useContext(ContainerContext);
   const [confirmError, setConfirmError] = useState(null);
   const [newWordError, setNewWordError] = useState(null);
   const [disabledBtn, setDisabledBtn] = useState(false);
@@ -20,10 +21,29 @@ function User() {
     },
   ];
 
+  // const handleLogout = () => {
+  //   sessionStorage.clear();
+  //   Cookies.remove('token'); // 清除 token cookie
+  //   Cookies.remove('sessionId'); // 清除 sessionId cookie
+  //   localStorage.clear(); // 清空 localStorage
+  //   setMenu([]); // 清空菜单数据
+  //   setAccount({}); // 清空账号数据
+  //   setLogged(false); // 更新登录状态
+  //   window.location.href = '/';
+  // }
+
   const handleLogout = () => {
     sessionStorage.clear();
-    window.location.href = '/';
-  };
+    Cookies.remove('token'); // 清除 token cookie
+    Cookies.remove('sessionId'); // 清除 sessionId cookie
+    localStorage.clear(); // 清空 localStorage
+    setMenu([]); // 清空菜单数据
+    setAccount({}); // 清空账号数据
+    setLogged(false); // 更新登录状态
+    setTimeout(() => {
+        window.location.href = '/';
+    }, 100); // 延迟100毫秒
+}
 
   const handleResetWord = () => {
     showModal();
@@ -100,13 +120,12 @@ function User() {
   return (
     <div className="userinfo">
       {/* mockmenu时需注释，其余环境需暴露 */}
-      <span className="name">{account}</span>  
       <Tooltip title="退出登录">
         <PoweroffOutlined onClick={handleLogout} />
       </Tooltip>
-      <Tooltip title="修改密码">
+      {/* <Tooltip title="修改密码">
         <UserOutlined onClick={handleResetWord} />
-      </Tooltip>
+      </Tooltip> */}
       <Modal
         className="add-modal"
         wrapClassName="recruiment-modal"

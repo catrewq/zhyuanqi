@@ -90,7 +90,9 @@ export const apis = {
   },
   residence: {
     // List: '/tax/basedata/residence/type'//户籍类型列表
-    List:'/bill/inspection'
+    List: '/bill/inspection'
+    // List: '/fxiaoke/bill/inspection'
+    
   },
   supplierContract: {
     List: "/tax/erp/sup/contract"

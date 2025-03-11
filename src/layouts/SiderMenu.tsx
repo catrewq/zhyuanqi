@@ -5,6 +5,7 @@ import Sider from "antd/lib/layout/Sider";
 import React, { useContext, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { ReactSVG } from "react-svg";
+import { log } from "util";
 import icon from "../assets/images/icon_task.svg";
 import ContainerContext from "../utils/context";
 import ContainerSettingContext from "./ContainerSettingContext";
@@ -168,6 +169,8 @@ const SiderMenu = (callback: any) => {
       });
       setItems(newMenu);
     }
+    console.log(menuList);
+    
     // eslint-disable-next-line
   }, [menuList]);
 

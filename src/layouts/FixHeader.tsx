@@ -17,10 +17,10 @@ const FixHeader = (props: any) => {
 
   return (
     <Header className="common-header">
-      <div className="logo">
+      {/* <div className="logo">
         <b>F</b>
         <span>分销客</span>
-      </div>
+      </div> */}
       {/* <p className="logo"></p> */}
       {visible && (
         <Breadcrumb className="breadcrumbs">

@@ -2,36 +2,32 @@
 //使用自定义表格
 import React, { useRef, useState, useEffect } from 'react';
 import CustomTable from 'src/components/publicUI/table'; // 你的 uiCustomTable组件的路径
-import { Button, Form, Input, Space, Modal, Select, message, Tooltip } from 'antd';
+import { Button, Form, Input, Space, Modal, Select, message, Tooltip, DatePicker } from 'antd';
 import { createSorter, showInfo, filterQueryObject, getGenericStatus } from "src/utils/util";
 import { DownOutlined } from '@ant-design/icons';
 import { apis } from 'src/utils/apis';
 import axios from 'src/utils/axios';
 import SearchName from "src/utils/apiEnum";
 import { dateFormat } from 'src/utils/dateFormatDayjs';
-import { handleBatchActions, fetchDownload } from 'src/utils/apiData';
 import { statusMap, finishMap } from './enum';
 import QueryUtil, { QueryOperator } from "src/utils/ObjectParamUtil";
+import OssProxy from 'src/utils/OssProxyUtil';
+import moment from 'moment';
 const { confirm } = Modal;
 const App = () => {
     const customTableRef = useRef();//ref绑定CustomTable组件
     const [firstRender, setFirstRender] = useState(true);
     const [formAddEdit] = Form.useForm();
-    const [keys, setKeys] = useState([]);
-    const [rows, setRows] = useState([]);
-    const [clientOSS, setClientOSS] = useState({});
     const [visible, setVisible] = useState({
         visibleAdd_Edit: false,
+        mode: null,
     });
-    const [disabled, setDisabled] = useState({
-        disabledAdd_Edit: false,
-        disabledBtn: false,
-    });
-    const [loadingExport, setLoadingExport] = useState(false);
 
-    const initialValues = {
-        baseStatus: 0,
-    }
+    const [disabledModal, setDisabledModal] = useState({
+        disabled_release: false,
+    });
+
+
     // 在按钮的点击事件处理函数中通过 ref 调用 query 方法
     const refQuery = () => {
         if (customTableRef.current) {
@@ -40,81 +36,18 @@ const App = () => {
     };
 
 
-    const handleStatus = async (value, isStatus) => {
-        if (value) {
-            confirm({
-                content: (
-                    <div>
-                        {isStatus ? null : <p style={{ textAlign: 'left', fontWeight: 'bold' }}>失效</p>}
-                        <p>{isStatus ? '请确认是否启用该户籍' : '此操作将该户籍状态失效，请确认是否停用该户籍'}</p>
-                    </div>
-                ),
-                onOk() {
-                    return new Promise((resolve, reject) => {
-                        handleBatchActions(resolve, reject, value, isStatus, apis.residence.List)
-                            .then((response) => {
-                                const { failedCount, successCount, totalCount } = response.data;
-                                if (successCount > 0) {
-                                    message.success(`操作成功！成功数: ${successCount}, 总数: ${totalCount}`);
-                                    refQuery();
-                                    setKeys([]);
-                                    resolve();
-                                } else {
-                                    message.error(`操作失败！失败数: ${failedCount}`);
-                                    setKeys([]);
-                                    reject(new Error(`操作失败！失败数: ${failedCount}`));
-                                }
-                            })
-                            .catch((error) => {
-                                console.error("Error in handleStatus:", error);
-                                reject(error);
-                            });
-                    });
-                },
-                width: "400px",
-            });
-        }
-    };
 
-
-    const getFile = async (fileName) => {
-        const url = await clientOSS.signatureUrl(fileName, {
-            "content-disposition": `attachment; filename=${encodeURIComponent(
-                fileName
-            )}`,
-        });
-        window.open(url);
-    };
-
-    // 导出
-    const handleExport = async () => {
-        setLoadingExport(true);
-        let objs = getPostData(),
-            postData = {
-                ...objs,
-            };
-        fetchDownload(postData, apis.residence.List)
-            .then((response) => {
-                if (response.data.success) {
-                    if (response.data.data) {
-                        getFile(response.data.data);
-                    } else {
-                        message.error("未查出相关导出数据")
-                    }
-                    setLoadingExport(false);
-                }
-            })
-            .catch((error) => {
-                console.error(error);
-                setLoadingExport(false);
-            });
-    };
-
-    const showModalAdd_Edit = () => {
+    const showModalAdd_Edit = (operate) => {
         setVisible(prevState => ({
             ...prevState,
             visibleAdd_Edit: !prevState.visibleAdd_Edit,
+            mode: operate
         }));
+        setDisabledModal(prevState => ({
+            ...prevState,
+            disabled_release: false,
+        }));
+
         formAddEdit.resetFields();
     };
 
@@ -122,43 +55,76 @@ const App = () => {
         formAddEdit
             .validateFields()
             .then(async () => {
-                handleSubmitAdd_Edit();
+                handleSubmit();
             })
             .catch((errors) => {
-                console.log(errors);
+
             });
     };
 
-    const handleSubmitAdd_Edit = async () => {
-        setDisabled({
-            ...disabled,
-            disabledAdd_Edit: true,
-        });
+
+
+
+    const handleSubmit = async () => {
+        setDisabledModal(prevState => ({
+            ...prevState,
+            disabled_release: true,
+        }));
+
         let postData = { ...formAddEdit.getFieldsValue(true) };
-        console.log(postData);
-        const { data } = await axios({
-            // 编辑，新增
-            url: `${apis.residence.List}/create`,
-            method: "post",
-            headers: { "Content-Type": "application/json" },
-            data: JSON.stringify(postData),
-        });
-        if (data.success) {
-            message.success(data.message);
-            refQuery();
-            setDisabled({
-                ...disabled,
-                disabledAdd_Edit: false,
+
+        if (postData.yearMonth) {
+            postData.yearMonth = Number(dateFormat(postData.yearMonth, "YYYYMM"));
+        }
+
+        const url = visible.mode === 'download'
+            ? '/fxiaoke/api/bill/inspection/print/download/asyn'
+            : '/fxiaoke/api/bill/inspection/gen/cache';
+
+        try {
+            const { data } = await axios({
+                url,
+                method: "post",
+                headers: { "Content-Type": "application/json" },
+                data: JSON.stringify(postData),
             });
-            showModalAdd_Edit();
-        } else {
-            message.error(data.message);
-            setDisabled({
-                ...disabled,
-                disabledAdd_Edit: false,
+
+            if (data.success) {
+                if (typeof data.data === 'string' && data.data.includes('.xlsx')) {
+                    OssProxy.getUrl(data.data).then((url) => {
+                        window.open(url);
+                    });
+                } 
+                message.success(data.message);
+                showModalAdd_Edit();
+                setDisabledModal({
+                    ...disabledModal,
+                    disabled_release: false,
+                });
+                refQuery();
+            } else {
+                message.error(data.message);
+                setDisabledModal({
+                    ...disabledModal,
+                    disabled_release: false,
+                });
+            }
+        } catch (error) {
+            if (error?.data?.message) {
+                message.error(error?.data?.message);
+            } else {
+                message.error("请求失败，请稍后重试");
+            }
+            setDisabledModal({
+                ...disabledModal,
+                disabled_release: false,
             });
         }
     };
+
+
+
+
 
     // 自定义查询函数，查询可能存在差异性，现做分离处理
     const getPostData = (form) => {
@@ -172,23 +138,20 @@ const App = () => {
 
         const filteredObj = filterQueryObject(obj);
         const newObj = QueryUtil.get(filteredObj, query);
-        console.log(newObj);
         return newObj;
     };
 
 
-    // 选择框
-    const rowSelection = {
-        fixed: "left",
-        // type: 'radio', // 一次只能选择一行
-        selectedRowKeys: keys,
-        onChange: (selectedRowKeys, selectedRows) => {
-            setKeys(selectedRowKeys);
-            setRows(selectedRows);
-        },
-        // selections: [], // 去掉全选按钮
-        width: "50",
-    };
+    // // 选择框
+    // const rowSelection = {
+    //     fixed: "left",
+    //     selectedRowKeys: keys,
+    //     onChange: (selectedRowKeys, selectedRows) => {
+    //         setKeys(selectedRowKeys);
+    //         setRows(selectedRows);
+    //     },
+    //     width: "50",
+    // };
 
     //自定义列表-可伸缩排序
     const columns = [
@@ -200,7 +163,7 @@ const App = () => {
             sorter: createSorter('insStatus', true),
             // 自己瞎写的枚举
             render: (text, record) => {
-                switch (record.baseStatus) {
+                switch (record.insStatus) {
                     case 0:
                         return (
                             <div className="common-status">
@@ -225,8 +188,27 @@ const App = () => {
             width: 200,
             title: '是否完成巡检',
             ellipsis: true,
-            sorter: createSorter('isFinish'),
-            render: (isFinish) => getGenericStatus(isFinish, finishMap),
+            sorter: createSorter('isFinish', true),
+            render: (text, record) => {
+                switch (record.isFinish) {
+                    case 0:
+                        return (
+                            <div className="common-status">
+                                <i className="common-dot common-dot-success"></i>
+                                <span>是</span>
+                            </div>
+                        );
+                    case 1:
+                        return (
+                            <div className="common-status">
+                                <i className="common-dot common-dot-error"></i>
+                                <span>否</span>
+                            </div>
+                        );
+                    default:
+                        break;
+                }
+            },
         },
         {
             dataIndex: 'startDate',
@@ -294,8 +276,8 @@ const App = () => {
                     placeholder="请选择"
                     allowClear
                     options={[
-                        { label: '是', value: true },
-                        { label: '否', value: false },
+                        { label: '是', value: 1 },
+                        { label: '否', value: 0 },
                         { label: '全部', value: '' }
                     ]}
                 />
@@ -310,44 +292,28 @@ const App = () => {
                 <Button
                     type="primary"
                     size="middle"
-                    onClick={showModalAdd_Edit}
+                    onClick={() => showModalAdd_Edit("download")}
                 >
-                    新增户籍类型
+                    按月份下载excel
                 </Button>
                 <Button
                     type="primary"
                     size="middle"
-                    onClick={handleExport}
-                    loading={loadingExport}
+                    onClick={() => showModalAdd_Edit("generate")}
                 >
-                    导出
-                </Button>
-                <Button
-                    type="primary"
-                    ghost
-                    onClick={() => handleStatus(keys, false)}
-                    disabled={(!keys.length || rows.some(item => item.baseStatus === 1))}
-                >
-                    失效
-                </Button>
-                <Button
-                    type="primary"
-                    ghost
-                    onClick={() => handleStatus(keys, true)}
-                    disabled={(!keys.length || rows.some(item => item.baseStatus === 0))}
-                >
-                    生效
+                    按月份重新生成excel
                 </Button>
             </Space>
         </div>
     );
 
-    useEffect(() => {
-        if (!firstRender) {
-        }
-        setFirstRender(false);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [firstRender]);
+    // 定义一个函数来禁用当前日期之后的日期
+    const disabledDate = (current) => {
+        // 禁用今天之后的所有日期
+        return current && current > moment().endOf('month');
+    };
+
+
 
     return (
         <div className="App">
@@ -358,11 +324,10 @@ const App = () => {
                 ref={customTableRef}
                 url={apis.residence.List}
                 columns={columns}
-                roleId="yourRoleId"
-                // crumbs={['基础资料', '自定义列表设置']}
+                // roleId="yourRoleId"
                 searchForm={searchForm}
                 renderActions={renderActions}
-                rowSelection={rowSelection}
+                // rowSelection={rowSelection}
                 // initialValues={initialValues}
                 getPostData={getPostData}
             />
@@ -370,7 +335,7 @@ const App = () => {
                 className="add-modal"
                 wrapClassName="Data-modal"
                 open={visible.visibleAdd_Edit}
-                title="新增户籍类型"
+                title={visible.mode === "download" ? "按月份下载excel" : "按月份重新生成excel"}
                 footer={null}
                 width={526}
                 onCancel={showModalAdd_Edit}
@@ -385,32 +350,18 @@ const App = () => {
                         autoComplete="off"
                         layout="vertical"
                         requiredMark={false}
-                        initialValues={initialValues}
                     >
                         <Form.Item
-                            label={<span><span style={{ color: 'red' }}>*</span>户籍类型名称</span>}
-                            name="name"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: '请填写户籍类型名称',
-                                },
-                                {
-                                    pattern: /^\S+$/,
-                                    message: '户籍类型名称不能含空格'
-                                }
-                            ]}
+                            label="起始月份"
+                            name="yearMonth"
+                            rules={[{ required: true, message: '' }]}
                         >
-                            <Input placeholder="请输入" />
-                        </Form.Item>
-                        <Form.Item label="是否有效" name="baseStatus">
-                            <Select
-                                disabled
+                            <DatePicker
+                                format="YYYYMM"
+                                picker="month"
+                                placeholder="请选择"
                                 allowClear
-                                options={[
-                                    { label: '是', value: 0 },
-                                    { label: '否', value: 1 }
-                                ]}
+                            // disabledDate={disabledDate}
                             />
                         </Form.Item>
                     </Form>
@@ -419,10 +370,10 @@ const App = () => {
                     <Space>
                         <Button
                             type="primary"
+                            loading={disabledModal.disabled_release}
                             onClick={handleValidateAdd_Edit}
-                            disabled={disabled.disabledAdd_Edit}
                         >
-                            确定
+                            提交
                         </Button>
                         <Button onClick={showModalAdd_Edit}>取消</Button>
                     </Space>

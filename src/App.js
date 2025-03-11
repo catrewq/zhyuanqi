@@ -1,3 +1,78 @@
+// import React, { Suspense, useEffect, useState } from "react";
+// import { BrowserRouter } from 'react-router-dom';
+// import axios from "./utils/axios";
+// import MyContext from "./utils/context";
+// import { Spin } from "antd";
+// import Launcher from "./pages/launcher";
+// import "./styles/App.less";
+// import { menuData } from "./mock/mockMenu";
+// const Container = React.lazy(() => import("./layouts/Container"));
+
+// const App = () => {
+//   const [logged, setLogged] = useState(false);
+//   const [menu, setMenu] = useState([]);
+//   const [account, setAccount] = useState({});
+
+//   async function getMenu() {
+//     setMenu(menuData.data);
+//   }
+
+
+//   useEffect(() => {
+//     if (menu.length) {
+//       setLogged(true);
+//     }
+//   }, [menu, account]);
+
+//   useEffect(() => {
+//     let token = sessionStorage.getItem("token");
+//     let sessionId = sessionStorage.getItem("sessionId");
+//     if (sessionId && token) {
+//       getMenu();
+//     }
+//   }, []);
+
+
+
+//   return (
+//     <BrowserRouter basename="/">
+//       {/* {!logged ? (
+//         <Launcher />
+//       ) : (
+//         <Suspense
+//           fallback={
+//             <div className="spin-wrapper">
+//               <Spin />
+//             </div>
+//           }
+//         >
+//           <MyContext.Provider value={{ menu, account }}>
+//             <Container />
+//           </MyContext.Provider>
+//         </Suspense>
+//       )} */}
+
+
+//       <Suspense
+//         fallback={
+//           <div className="spin-wrapper">
+//             <Spin />
+//           </div>
+//         }
+//       >
+//         <MyContext.Provider value={{ menu, account }}>
+//           <Container />
+//         </MyContext.Provider>
+//       </Suspense>
+
+//     </BrowserRouter>
+//   );
+// };
+
+// export default App;
+
+
+import Cookies from 'js-cookie';
 import React, { Suspense, useEffect, useState } from "react";
 import { BrowserRouter } from 'react-router-dom';
 import axios from "./utils/axios";
@@ -10,66 +85,97 @@ const Container = React.lazy(() => import("./layouts/Container"));
 
 const App = () => {
   const [logged, setLogged] = useState(false);
-  const [menu, setMenu] = useState([]);
+  const [menu, setMenu] = useState(menuData.data);
   const [account, setAccount] = useState({});
+  const [loading, setLoading] = useState(true); // 增加加载状态
 
-  async function getMenu() {
+  const getMenu = () => {
     setMenu(menuData.data);
-    setAccount(menuData.data.account);
   }
 
 
   useEffect(() => {
-    if (menu.length) {
-      setLogged(true);
-    }
-  }, [menu, account]);
+    // 组件挂载时从 localStorage 中读取数据
+    const storedMenu = localStorage.getItem('menu');
+    const storedLogged = localStorage.getItem('logged');
 
-  useEffect(() => {
-    let token = sessionStorage.getItem("token");
-    let sessionId = sessionStorage.getItem("sessionId");
-    if (sessionId && token) {
-      getMenu();
+    if (storedMenu) {
+      setMenu(JSON.parse(storedMenu));
     }
+
+    if (storedLogged) {
+      setLogged(JSON.parse(storedLogged));
+    }
+
+    // 初始化完成后更新加载状态
+    setLoading(false);
   }, []);
 
+  useEffect(() => {
+    if (menu.length > 0) {
+      let token = Cookies.get('token');
+      let sessionId = Cookies.get('sessionId');
+      console.log(token);
+      console.log(sessionId);
+      console.log(menu);
+      if (sessionId && token) {
+        getMenu();
+        setLogged(true);
+      } else {
+        setLogged(false); // 确保 logged 状态正确更新
+      }
+    }
+  }, [menu]);
 
+
+  // 当 menu 或 logged 状态变化时，将其存储到 localStorage 中
+  useEffect(() => {
+    localStorage.setItem('menu', JSON.stringify(menu));
+  }, [menu]);
+
+  useEffect(() => {
+    localStorage.setItem('logged', JSON.stringify(logged));
+  }, [logged]);
 
   return (
     <BrowserRouter basename="/">
-      {/* {!logged ? (
-        <Launcher />
+      {loading ? (
+        <div className="spin-wrapper">
+          <Spin />
+        </div>
       ) : (
-        <Suspense
-          fallback={
-            <div className="spin-wrapper">
-              <Spin />
-            </div>
-          }
-        >
-          <MyContext.Provider value={{ menu, account }}>
-            <Container />
-          </MyContext.Provider>
-        </Suspense>
-      )} */}
-
-
-      <Suspense
+        !logged ? (
+          <Launcher />
+        ) : (
+          <Suspense
+            fallback={
+              <div className="spin-wrapper">
+                <Spin />
+              </div>
+            }
+          >
+            <MyContext.Provider value={{ menu, setMenu, account, setAccount, logged, setLogged }}>
+              <Container />
+            </MyContext.Provider>
+          </Suspense>
+        )
+      )}
+      {/* <Suspense
         fallback={
           <div className="spin-wrapper">
             <Spin />
           </div>
         }
       >
-        <MyContext.Provider value={{ menu, account }}>
+        <MyContext.Provider value={{ menu, setMenu, account, setAccount, logged, setLogged }}>
           <Container />
         </MyContext.Provider>
-      </Suspense>
-
+      </Suspense> */}
     </BrowserRouter>
   );
 };
 
 export default App;
+
 
 

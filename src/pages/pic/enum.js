@@ -8,8 +8,8 @@ let statusMap = [
 
 
 let finishMap = [
-    [true, "是"],
-    [false, "否"],
+    [0, "是"],
+    [1, "否"],
     ["default", ""],
 ];
 

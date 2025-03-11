@@ -3,36 +3,11 @@ import './styles.css';
 import axios from 'src/utils/axios';
 import OssProxy from 'src/utils/OssProxyUtil';
 import { message } from 'antd';
-// import FixHeader from 'src/layouts/FixHeader';
-// import file6 from 'src/assets/images/file6.png';
-// import file5 from 'src/assets/images/file5.png';
-// import file4 from 'src/assets/images/file4.png'
+import FixHeader from 'src/layouts/FixHeader';
+import ReactPlayer from 'react-player';
 
 const PhotoGallery = () => {
   const [imagesData, setImagesData] = useState([]);
-  // const [imagesData, setImagesData] = useState([
-  //   {
-  //     groupName: 'Group 1',
-  //     uris: [
-  //       file6,
-  //       file5
-  //     ]
-  //   },
-  //   {
-  //     groupName: 'Group 2',
-  //     uris: [
-  //       file6,
-  //       file5,
-  //       file4
-  //     ]
-  //   },
-  //   {
-  //     groupName: 'Group 3',
-  //     uris: [
-  //       file6
-  //     ]
-  //   }
-  // ]);
   const [currentImage, setCurrentImage] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [transform, setTransform] = useState({ scale: 1, x: 0, y: 0 });
@@ -72,7 +47,7 @@ const PhotoGallery = () => {
     console.log(urlParams);
 
     // Construct a new URL using the captured parameters
-    const newUrl = `https://tool.zanhua.com.cn/api/fxiaoke/bill/inspection/print/pic/url?id=${id}&type=${type}`;
+    const newUrl = `http://tooltest.zanhua.com.cn/test/api/fxiaoke/bill/inspection/print/pic/url?id=${id}&type=${type}`;
     console.log(newUrl);
 
     // Fetch data from the new URL
@@ -105,6 +80,7 @@ const PhotoGallery = () => {
   //   console.log("ID:", id);
   //   console.log("Type:", type);
   // }, [location]);
+
 
   // 边界检查逻辑
   const enforceBounds = () => {
@@ -165,14 +141,6 @@ const PhotoGallery = () => {
   };
 
   // 拖拽功能
-  // const startDragging = (e) => {
-  //   setIsDragging(true);
-  //   dragStartPos.current = {
-  //     x: e.clientX - transform.x,
-  //     y: e.clientY - transform.y
-  //   };
-  // };
-
   const startDragging = (e) => {
     if (transform.scale <= 1) return; // 新增条件
 
@@ -182,20 +150,6 @@ const PhotoGallery = () => {
       y: e.clientY - transform.y
     };
   };
-
-
-  // const handleMouseMove = (e) => {
-  //   if (!isDragging) return;
-
-  //   const newX = e.clientX - dragStartPos.current.x;
-  //   const newY = e.clientY - dragStartPos.current.y;
-
-  //   setTransform(prev => ({
-  //     ...prev,
-  //     x: newX,
-  //     y: newY
-  //   }));
-  // };
 
   const handleMouseMove = (e) => {
     if (!isDragging || transform.scale <= 1) return; // 新增条件
@@ -251,26 +205,136 @@ const PhotoGallery = () => {
   }, [transform.scale]);
 
   // 图片容器样式
+  // const imagesStyle = (group, categoryIndex) => (
+  //   <div className="products-container">
+  //     {group.uris.map((uri, index) => (
+  //       <div className="product" key={index}>
+  //         <img
+  //           src={uri}
+  //           alt={`${group.groupName} - 照片 ${index + 1}`}
+  //           onClick={() => openLightbox(uri, categoryIndex, index)}
+  //         />
+  //         <p>{group.groupName} - 照片{index + 1}</p>
+  //       </div>
+  //     ))}
+  //   </div>
+  // );
+
+  /**
+   * 通用文件类型判断工具
+   * @param {string} url 文件地址
+   * @returns {object} 包含类型判断的结果对象
+   */
+  const detectFileType = (url) => {
+    // 1. 移除URL中的查询参数和哈希
+    const cleanUrl = url.split(/[?#]/)[0];
+
+    // 2. 解码URL编码字符（如%20等）
+    const decodedUrl = decodeURIComponent(cleanUrl);
+
+    // 3. 提取最后一个路径段作为文件名
+    const filename = decodedUrl.split('/').pop() || '';
+
+    // 4. 处理多扩展名情况（如.tar.gz）
+    const extensions = filename.split('.');
+    const mainExtension = extensions.length > 1
+      ? extensions.pop().toLowerCase()
+      : '';
+
+    // 5. 类型匹配
+    return {
+      isAudio: ['m4a', 'mp3', 'wav', 'ogg', 'flac'].includes(mainExtension),
+      isVideo: ['mp4', 'mov', 'webm', 'avi'].includes(mainExtension),
+      isImage: ['jpg', 'jpeg', 'png', 'gif'].includes(mainExtension),
+      extension: mainExtension
+    };
+  };
+  // 组件中动态渲染逻辑
+  const MediaRenderer = ({ url, groupName, index, categoryIndex }) => {
+    const { isAudio, isVideo, isImage } = detectFileType(url);
+
+    if (isAudio) {
+      return (
+        <div className="audio-container">
+          <ReactPlayer
+            url={url}
+            controls
+            width="100%"
+            height="50px"
+            config={{
+              file: {
+                attributes: {
+                  // 处理跨域和自动播放策略
+                  crossOrigin: 'anonymous',
+                  playsInline: true
+                }
+              }
+            }}
+          />
+          <p>{groupName} - 音频{index + 1}</p>
+        </div>
+      );
+    }
+
+    if (isVideo) {
+      return (
+        <div className="video-container">
+          <ReactPlayer
+            url={url}
+            controls
+            width="100%"
+            height="auto"
+          />
+          <p>{groupName} - 视频{index + 1}</p>
+        </div>
+      );
+    }
+
+    if (isImage) {
+      return (
+        <>
+          <img
+            src={url}
+            alt={`${groupName} - 照片 ${index + 1}`}
+            onClick={() => openLightbox(url, categoryIndex, index)}
+          />
+          <p>{groupName} - 照片{index + 1}</p>
+        </>
+      );
+    }
+
+    // 未知类型处理
+    return (
+      <div className="unknown-file">
+        <Icon type="file-unknown" />
+        <p>不支持的文件格式</p>
+      </div>
+    );
+  };
+
+  // 在原有imagesStyle中使用
   const imagesStyle = (group, categoryIndex) => (
     <div className="products-container">
       {group.uris.map((uri, index) => (
         <div className="product" key={index}>
-          <img
-            src={uri}
-            alt={`${group.groupName} - 照片 ${index + 1}`}
-            onClick={() => openLightbox(uri, categoryIndex, index)}
+          <MediaRenderer
+            url={uri}
+            groupName={group.groupName}
+            index={index}
+            categoryIndex={categoryIndex}
           />
-          <p>{group.groupName} - 照片{index + 1}</p>
         </div>
       ))}
     </div>
   );
 
+
+
   return (
     <>
-      {/* <FixHeader /> */}
+      <FixHeader />
       <div className="photo-gallery">
-        {imagesData?.map((group, index) => (
+        {imagesData.map((group, index) => (
           <div className="category" key={index}>
             <h1>{group.groupName}</h1>
             {imagesStyle(group, index)}
