@@ -139,7 +139,7 @@ const App = () => {
 
   return (
     <BrowserRouter basename="/">
-      {loading ? (
+      {/* {loading ? (
         <div className="spin-wrapper">
           <Spin />
         </div>
@@ -159,8 +159,8 @@ const App = () => {
             </MyContext.Provider>
           </Suspense>
         )
-      )}
-      {/* <Suspense
+      )} */}
+      <Suspense
         fallback={
           <div className="spin-wrapper">
             <Spin />
@@ -170,7 +170,7 @@ const App = () => {
         <MyContext.Provider value={{ menu, setMenu, account, setAccount, logged, setLogged }}>
           <Container />
         </MyContext.Provider>
-      </Suspense> */}
+      </Suspense>
     </BrowserRouter>
   );
 };

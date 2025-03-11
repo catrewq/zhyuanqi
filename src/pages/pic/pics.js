@@ -333,7 +333,7 @@ const PhotoGallery = () => {
 
   return (
     <>
-      <FixHeader />
+      {/* <FixHeader /> */}
       <div className="photo-gallery">
         {imagesData.map((group, index) => (
           <div className="category" key={index}>
