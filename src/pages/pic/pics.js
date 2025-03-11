@@ -252,17 +252,13 @@
 // import file5 from 'https://zhyuanqi.oss-cn-shanghai.aliyuncs.com/2025-2-5/bjmt2222.jpg';
 // import file4 from 'https://zhyuanqi.oss-cn-shanghai.aliyuncs.com/2025-2-5/bjmt111111.jpg';
 
-import Icon from '@ant-design/icons';
+import { FileUnknownOutlined } from '@ant-design/icons';
 import { message } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
-import FixHeader from 'src/layouts/FixHeader';
 import axios from 'src/utils/axios';
 import OssProxy from 'src/utils/OssProxyUtil';
-import { message } from 'antd';
-import FixHeader from 'src/layouts/FixHeader';
-import ReactPlayer from 'react-player';
-import { FileUnknownOutlined } from '@ant-design/icons';
+import './styles.css';
 
 const PhotoGallery = () => {
   const [imagesData, setImagesData] = useState([]);
@@ -281,7 +277,8 @@ const PhotoGallery = () => {
   const convertAndLogUrls = async (groups) => {
     const updatedGroups = await Promise.all(
       groups.map(async (group) => {
-        const uriPromises = group.uris.map((uri) => OssProxy.getUrl(uri));
+        //const uriPromises = group.uris.map((uri) => OssProxy.getUrl(uri));
+        const uriPromises = await OssProxy.getUrls(group.uris);
         const uris = await Promise.all(uriPromises);
         return { groupName: group.groupName, uris };
       })

@@ -5,6 +5,10 @@ const autoRefreshMillSeconds = 4 * 60 * 60 * 1000;
 
 class OssProxy {
 
+    getUrls(uris: string[]): Promise<string[]> {
+        return getUrls(uris);
+    }
+
     getUrl(uri: string): Promise<string> {
         return getUrl(uri);
     }
@@ -59,7 +63,47 @@ async function getOssClient() {
 
 /**
  * 获取完整url
- * @param uri 部分路径
+ * @param uris 部分路径
+ * @returns 
+ */
+function getUrls(uris: string[]): Promise<string[]> {
+
+    return new Promise(async function (resolve, reject) {
+
+        const ossClient = await getOssClient();
+
+        if (ossClient === null) {
+            reject("oss client error");
+        }
+
+        let urls: string[] = [];
+
+        for (let index = 0; index < uris.length; index++) {
+            const uri = uris[index];
+
+            const url: string = await ossClient.signatureUrl(uri, {
+                "content-disposition": `attachment; filename=${encodeURIComponent(
+                    uri
+                )}`,
+            });
+
+            urls.push(url);
+        }
+        
+        // 获取url
+        if (urls) {
+            resolve(urls);
+        } else {
+            reject("url get failed");
+        }
+    }) as Promise<string[]>;
+
+}
+
+
+/**
+ * 获取完整url
+ * @param uris 部分路径
  * @returns 
  */
 function getUrl(uri: string): Promise<string> {
@@ -72,18 +116,14 @@ function getUrl(uri: string): Promise<string> {
             reject("oss client error");
         }
 
-        const url = await ossClient.signatureUrl(uri, {
-            "content-disposition": `attachment; filename=${encodeURIComponent(
-                uri
-            )}`,
+        let uris: string[] = [uri];
+
+        getUrls(uris).then(urls => {
+            resolve(urls[0]);
+        }).catch(e => {
+            reject("url get failed");
         });
 
-        // 获取url
-        if (url) {
-            resolve(url);
-        } else {
-            reject("url get failed");
-        }
     }) as Promise<string>;
 
 }
