@@ -14,8 +14,6 @@ const CLASS_NAME = "BaseData";
 
 const PICS_LIST = "pics"
 const PIC_LIST = "list";
-// 注释
-const PI_LIST = "pi"
 
 export const children: TabRouteConfig[] = (
   [
