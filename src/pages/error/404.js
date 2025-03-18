@@ -1,11 +1,11 @@
 import { Result } from 'antd';
 import './index.less';
-// import FixHeader from 'src/layouts/FixHeader';
+import FixHeader from 'src/layouts/FixHeader';
 
 
 const Page404 = () => (
   <div className="Error">
-    {/* <FixHeader /> */}
+    <FixHeader />
 
     <Result
       status="404"

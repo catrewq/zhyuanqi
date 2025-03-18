@@ -6,6 +6,8 @@ import ReactPlayer from 'react-player';
 import axios from 'src/utils/axios';
 import OssProxy from 'src/utils/OssProxyUtil';
 import './styles.css';
+import FixHeader from 'src/layouts/FixHeader';
+
 
 const PhotoGallery = () => {
   const [imagesData, setImagesData] = useState([]);
@@ -325,7 +327,7 @@ const PhotoGallery = () => {
               }
             }}
           />
-          {/* <p>{groupName} - 音频{index + 1}</p> */}
+          <p>{groupName} - 音频{index + 1}</p>
         </div>
       );
     }
@@ -339,7 +341,7 @@ const PhotoGallery = () => {
             width="100%"
             height="auto"
           />
-          {/* <p>{groupName} - 视频{index + 1}</p> */}
+          <p>{groupName} - 视频{index + 1}</p>
         </div>
       );
     }
@@ -352,7 +354,7 @@ const PhotoGallery = () => {
             alt={`${groupName} - 照片 ${index + 1}`}
             onClick={() => openLightbox(url, categoryIndex, index)}
           />
-          {/* <p>{groupName} - 照片{index + 1}</p> */}
+          <p>{groupName} - 照片{index + 1}</p>
         </>
       );
     }

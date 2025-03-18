@@ -80,9 +80,9 @@ function Container() {
       >
         {/* <FixHeader crumbs={page.currentCrumbs}></FixHeader> */}
         <Layout className="main-container">
-          {/* <div className="sider-menu-container"> */}
-          {/* <SiderMenuRef props={{ callback: handleSiderRefClick }} ref={siderRef} /> */}
-          {/* </div> */}
+          <div className="sider-menu-container">
+            <SiderMenuRef props={{ callback: handleSiderRefClick }} ref={siderRef} />
+          </div>
 
           <MixRoute useOldRoute={useOldRoute} />
 
