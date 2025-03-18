@@ -52,7 +52,7 @@ const Login = () => {
   const handleLogin = async (obj: LoginRequest) => {
     setDisabled(true);
     await axios.post(
-      'http://tooltest.zanhua.com.cn/test/api/fxiaoke/account/user/login',
+      '/account/user/login',
       JSON.stringify({
         username: obj.username,
         password: obj.password,

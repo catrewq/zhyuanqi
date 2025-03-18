@@ -4,7 +4,7 @@ import { Routes, useNavigate } from "react-router-dom";
 
 import React from "react";
 import "./Layout.less";
-import TabRoute, { printTabChangeLog, hiddenSilderBtn as silderConfig, useOldURI } from "./MainRoute2";
+import TabRoute, { printTabChangeLog, hiddenSilderBtn as silderConfig } from "./MainRoute2";
 import MainRoute from "./MainRoute_old";
 
 // import { useTabNavigate } from "src/utils/navigateUtil";
@@ -61,9 +61,9 @@ function Container() {
    * @param useOldRoute
    * @returns
    */
-  const MixRoute = ({ useOldRoute }: any) => {
+  const MixRoute = (e: { old: boolean }) => {
 
-    if (useOldRoute) {
+    if (e.old) {
       return (<MainRoute />)
     }
 
@@ -84,7 +84,7 @@ function Container() {
             <SiderMenuRef props={{ callback: handleSiderRefClick }} ref={siderRef} />
           </div>
 
-          <MixRoute useOldRoute={useOldRoute} />
+          <MixRoute old={useOldRoute} />
 
         </Layout>
       </ContainerSettingContext.Provider>
@@ -93,6 +93,3 @@ function Container() {
 }
 
 export default Container;
-
-
-

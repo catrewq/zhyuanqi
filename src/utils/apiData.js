@@ -1,9 +1,7 @@
 // Note: API接口数据
 import axios from "axios";
 const baseURL = process.env.REACT_APP_BASE_URL;
-// const baseURL = 'http://tool.zanhua.com.cn/api/fxiaoke';
-// const baseURL = 'http://tooltest.zanhua.com.cn/test/api/fxiaoke';
-// const baseURL = 'http://localhost:3000';
+
 export function fetchList(start, length, modulePath, data) {
   if (data) {
     // 构建查询字符串

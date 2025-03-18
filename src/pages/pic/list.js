@@ -78,8 +78,8 @@ const App = () => {
         }
 
         const url = visible.mode === 'download'
-            ? '/fxiaoke/api/bill/inspection/print/download/asyn'
-            : '/fxiaoke/api/bill/inspection/gen/cache';
+            ? '/bill/inspection/print/download/asyn'
+            : '/bill/inspection/gen/cache';
 
         try {
             const { data } = await axios({
@@ -156,6 +156,11 @@ const App = () => {
     //自定义列表-可伸缩排序
     const columns = [
         {
+            dataIndex: 'number',
+            width: 200,
+            title: '编码',
+        },
+        {
             dataIndex: 'insStatus',
             width: 200,
             title: '巡检状态',
@@ -164,18 +169,18 @@ const App = () => {
             // 自己瞎写的枚举
             render: (text, record) => {
                 switch (record.insStatus) {
-                    case 0:
+                    case "1":
                         return (
                             <div className="common-status">
                                 <i className="common-dot common-dot-success"></i>
-                                <span>是</span>
+                                <span>巡检中</span>
                             </div>
                         );
-                    case 1:
+                    case "2":
                         return (
                             <div className="common-status">
                                 <i className="common-dot common-dot-error"></i>
-                                <span>否</span>
+                                <span>巡检结束</span>
                             </div>
                         );
                     default:
@@ -191,14 +196,14 @@ const App = () => {
             sorter: createSorter('isFinish', true),
             render: (text, record) => {
                 switch (record.isFinish) {
-                    case 0:
+                    case 1:
                         return (
                             <div className="common-status">
                                 <i className="common-dot common-dot-success"></i>
                                 <span>是</span>
                             </div>
                         );
-                    case 1:
+                    case 2:
                         return (
                             <div className="common-status">
                                 <i className="common-dot common-dot-error"></i>
@@ -265,8 +270,8 @@ const App = () => {
                     placeholder="请选择"
                     allowClear
                     options={[
-                        { label: '是', value: 0 },
-                        { label: '否', value: 1 },
+                        { label: '巡检中', value: "1" },
+                        { label: '巡检结束', value: "2" },
                         { label: '全部', value: '' }
                     ]}
                 />
@@ -277,7 +282,7 @@ const App = () => {
                     allowClear
                     options={[
                         { label: '是', value: 1 },
-                        { label: '否', value: 0 },
+                        { label: '否', value: 2 },
                         { label: '全部', value: '' }
                     ]}
                 />
@@ -322,7 +327,7 @@ const App = () => {
             */}
             <CustomTable
                 ref={customTableRef}
-                url={apis.residence.List}
+                url={apis.inspection.list}
                 columns={columns}
                 // roleId="yourRoleId"
                 searchForm={searchForm}

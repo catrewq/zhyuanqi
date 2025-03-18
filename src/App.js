@@ -1,15 +1,20 @@
 import { Spin } from 'antd';
 import Cookies from 'js-cookie';
 import React, { Suspense, useEffect, useState } from "react";
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { menuData } from "./mock/mockMenu";
 import Launcher from "./pages/launcher";
+import { pics as PicPage } from "./pages/pic/index";
 import "./styles/App.less";
 import MyContext from "./utils/context";
 
 const Container = React.lazy(() => import("./layouts/Container"));
 
 const App = () => {
+
+  const isPic = window.location.pathname.startsWith("/pic/pics");
+  //const [isPic, setIsPic] = useState();
+
   const [logged, setLogged] = useState(false);
   const [menu, setMenu] = useState(menuData.data);
   const [account, setAccount] = useState({});
@@ -63,29 +68,36 @@ const App = () => {
     localStorage.setItem('logged', JSON.stringify(logged));
   }, [logged]);
 
+  function getPicCompenont() {
+    return (<Routes>
+      <Route path="/pic/pics" element={<div className='x-Data-Frame-Old'> < PicPage /> </div>} />
+    </Routes>);
+  }
+
   return (
     <BrowserRouter basename="/">
       {loading ? (
         <div className="spin-wrapper">
           <Spin />
         </div>
-      ) : (
-        !logged ? (
-          <Launcher />
-        ) : (
-          <Suspense
-            fallback={
-              <div className="spin-wrapper">
-                <Spin />
-              </div>
-            }
-          >
-            <MyContext.Provider value={{ menu, setMenu, account, setAccount, logged, setLogged }}>
-              <Container />
-            </MyContext.Provider>
-          </Suspense>
-        )
-      )}
+      ) : (isPic ? (getPicCompenont()) :
+        (
+          !logged ? (
+            <Launcher />
+          ) : (
+            <Suspense
+              fallback={
+                <div className="spin-wrapper">
+                  <Spin />
+                </div>
+              }
+            >
+              <MyContext.Provider value={{ menu, setMenu, account, setAccount, logged, setLogged }}>
+                <Container />
+              </MyContext.Provider>
+            </Suspense>
+          )
+        ))}
       {/* <Suspense
         fallback={
           <div className="spin-wrapper">
@@ -102,6 +114,3 @@ const App = () => {
 };
 
 export default App;
-
-
-

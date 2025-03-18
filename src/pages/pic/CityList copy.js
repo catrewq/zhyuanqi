@@ -60,7 +60,7 @@ const PhotoGallery = () => {
     const type = 'all';
 
     // 构造新URL
-    const newUrl = `https://tool.zanhua.com.cn/api/fxiaoke/bill/inspection/print/pic/url?id=${id}&type=${type}`;
+    const newUrl = `/bill/inspection/print/pic/url?id=${id}&type=${type}`;
     //const newUrl = `http://tooltest.zanhua.com.cn/test/api/fxiaoke/bill/inspection/print/pic/url?id=${id}&type=${type}`;
 
     console.log(newUrl);
