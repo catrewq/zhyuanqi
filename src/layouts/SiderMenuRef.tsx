@@ -197,7 +197,8 @@ const SiderMenuRef = React.forwardRef((refProp: { props: RefProps }, ref) => {
     }
 
     console.log(location.pathname);
-    const shouldCollapse = location.pathname.toLowerCase().includes('/pic/pics');
+    const shouldCollapse = location.pathname.toLowerCase().includes('/pic/pics') || 
+                           location.pathname.toLowerCase().includes('/pic/pluginpic');
     setIsCollapsedIs(shouldCollapse);
     
 

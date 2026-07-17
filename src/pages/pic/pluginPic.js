@@ -41,8 +41,8 @@ const PhotoGallery = () => {
     console.log(window.location.search);
     console.log(urlParams);
 
-    // Construct a new URL using the captured parameters
-    const newUrl = `http://tooltest.zanhua.com.cn/test/api/fxiaoke/bill/inspection/print/pic/url?id=${id}&type=${type}`;
+    // 使用相对路径，通过 proxy 转发到后端
+    const newUrl = `/bill/inspection/print/pic/url?id=${id}&type=${type}`;
     console.log(newUrl);
 
     // Fetch data from the new URL
@@ -70,6 +70,21 @@ const PhotoGallery = () => {
   const detectFileType = (url) => {
     // 1. 移除URL中的查询参数和哈希
     const cleanUrl = url.split(/[?#]/)[0];
+    let hostname = '';
+    try {
+      hostname = new URL(url).hostname;
+    } catch (e) {
+      hostname = '';
+    }
+
+    if (hostname.includes('picsum.photos')) {
+      return {
+        isAudio: false,
+        isVideo: false,
+        isImage: true,
+        extension: 'jpg'
+      };
+    }
 
     // 2. 解码URL编码字符（如%20等）
     const decodedUrl = decodeURIComponent(cleanUrl);
@@ -136,7 +151,7 @@ const PhotoGallery = () => {
             </div>
           }
           // 长图优化
-          longElement={<div className="long-image-hint">滚动查看完整内容 →</div>}
+          longElement={<div className="long-image-hint">滚动查看完整内容 ↓</div>}
         >
           <img
             src={url}
@@ -189,5 +204,3 @@ const PhotoGallery = () => {
 };
 
 export default PhotoGallery;
-
-

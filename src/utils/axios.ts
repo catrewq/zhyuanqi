@@ -5,6 +5,14 @@ import Cookies from 'js-cookie';
 
 let contentType = "application/x-www-form-urlencoded;charset=UTF-8";
 
+const redirectToLogin = () => {
+  Cookies.remove('token');
+  Cookies.remove('sessionId');
+  if (window.location.pathname !== "/") {
+    window.location.href = "/";
+  }
+};
+
 axios.defaults.baseURL = process.env.REACT_APP_BASE_URL;
 axios.defaults.headers["Content-Type"] = contentType;
 
@@ -13,8 +21,10 @@ axios.interceptors.request.use((config) => {
   const token = Cookies.get('token');
   const sessionId = Cookies.get('sessionId');
   
-  axios.defaults.headers.common["token"] = token;
-  axios.defaults.headers.common["appId"] = 3;
+  if (token) {
+    config.headers.token = token;
+  }
+  config.headers.appId = 3;
 
   if (sessionId) {
     config.headers.ssessionid = sessionId;
@@ -41,9 +51,7 @@ axios.interceptors.response.use(
 
     if (message === "用户未登录" || message === "登录过期，请重新登录" || rtnCode === -9999) {
       // refreshToken();
-      Cookies.remove('token');
-      Cookies.remove('sessionId');
-      window.location.href = "/";
+      redirectToLogin();
     }
 
     const response = {
@@ -62,9 +70,7 @@ axios.interceptors.response.use(
         return data.rtnCode === -9999;
       });
       if (shouldRedirect) {
-        Cookies.remove('token');
-        Cookies.remove('sessionId');
-        window.location.href = "/";
+        redirectToLogin();
       }
     }
 
@@ -86,13 +92,13 @@ axios.interceptors.response.use(
   (error) => {
     console.error(error);
 
-    if (error.response.status) {
+    if (error.response?.status) {
       switch (error.response.status) {
         case 400:
           alert(error.response.data.error.details);
           break;
         case 401:
-          alert("未授权，请登录");
+          redirectToLogin();
           break;
 
         case 403:

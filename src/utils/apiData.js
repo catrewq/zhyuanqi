@@ -1,5 +1,5 @@
 // Note: API接口数据
-import axios from "axios";
+import axios from "src/utils/axios";
 const baseURL = process.env.REACT_APP_BASE_URL;
 
 export function fetchList(start, length, modulePath, data) {

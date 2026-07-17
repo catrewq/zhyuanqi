@@ -4,7 +4,8 @@ import React, { Suspense, useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { menuData } from "./mock/mockMenu";
 import Launcher from "./pages/launcher";
-import { pics as PicPage } from "./pages/pic/index";
+import { pics as PicPage , pluginPic as PluginPicPage } from "./pages/pic/index";
+
 import "./styles/App.less";
 import MyContext from "./utils/context";
 
@@ -13,7 +14,7 @@ const Container = React.lazy(() => import("./layouts/Container"));
 const App = () => {
 
   const isPic = window.location.pathname.startsWith("/pic/pics");
-  //const [isPic, setIsPic] = useState();
+  const isPluginPic = window.location.pathname.startsWith("/pic/pluginPic");
 
   const [logged, setLogged] = useState(false);
   const [menu, setMenu] = useState(menuData.data);
@@ -71,8 +72,12 @@ const App = () => {
   function getPicCompenont() {
     return (<Routes>
       <Route path="/pic/pics" element={<div className='x-Data-Frame-Old'> < PicPage /> </div>} />
+      <Route path="/pic/pluginPic" element={<div className='x-Data-Frame-Old'> < PluginPicPage /> </div>} />
     </Routes>);
   }
+
+  // 判断是否为图片相关页面（pics 或 pluginPic）
+  const isPicPage = isPic || isPluginPic;
 
   return (
     <BrowserRouter basename="/">
@@ -80,7 +85,7 @@ const App = () => {
         <div className="spin-wrapper">
           <Spin />
         </div>
-      ) : (isPic ? (getPicCompenont()) :
+      ) : (isPicPage ? (getPicCompenont()) :
         (
           !logged ? (
             <Launcher />
@@ -98,17 +103,6 @@ const App = () => {
             </Suspense>
           )
         ))}
-      {/* <Suspense
-        fallback={
-          <div className="spin-wrapper">
-            <Spin />
-          </div>
-        }
-      >
-        <MyContext.Provider value={{ menu, setMenu, account, setAccount, logged, setLogged }}>
-          <Container />
-        </MyContext.Provider>
-      </Suspense> */}
     </BrowserRouter>
   );
 };

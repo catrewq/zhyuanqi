@@ -85,7 +85,7 @@ function User() {
     let postData = { ...form.getFieldsValue(true) };
     delete postData.newPasswordOK;
     await axios({
-      url: "/system/account/user/pwd/update",
+      url: "/account/user/pwd/update",
       method: "put",
       headers: { "Content-Type": "application/json" },
       data: JSON.stringify(postData),

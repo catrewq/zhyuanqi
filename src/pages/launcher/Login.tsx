@@ -20,6 +20,7 @@ class innerData {
   success: boolean = false;
   message!: string;
   permissions!: string;
+  data: any;
   info: any;
   userInfo: any;
 }
@@ -67,39 +68,55 @@ const Login = () => {
       }
     )
       .then((response: LoginResponse) => {
+        // 后端返回结构: { success, message, data: { userInfo, info }, rtnCode, rtnMessage }
+        const resData = response.data;
+        const innerData = resData?.data || {};
+        const userInfo = innerData.userInfo;
+        const info = innerData.info;
+
         // 先判断是否需要判断验证码
-        if (response.data && !response.data.success && !response.data.userInfo) {
-          message.error(response.data.message);
+        if (resData && !resData.success && !userInfo) {
+          message.error(resData.message);
           console.log(response.headers["validatecode"]);
-          setConfirmError(response.data.message);
+          setConfirmError(resData.message);
           Cookies.set('sessionId', response.headers['ssessionid'], { expires: 7 });
           if (response.headers["validatecode"]) {
             sessionStorage.setItem("validateCode", response.headers["validatecode"]);
           }
-          if (response.data.message === "验证码错误" || response.headers["validatecode"]) {
+          if (resData.message === "验证码错误" || response.headers["validatecode"]) {
             getCaptcha();
           }
           setDisabled(false);
-        } else if (response && response.data) {
+        } else if (response && resData) {
           //登录成功
-          Cookies.set('token', '0', { expires: 7 });
-          Cookies.set('sessionId', response.headers['ssessionid'], { expires: 7 });
+          const authToken = response.headers['token'];
+          const sessionId = response.headers['ssessionid'];
+          if (authToken) {
+            Cookies.set('token', authToken, { expires: 7 });
+          }
+          if (sessionId) {
+            Cookies.set('sessionId', sessionId, { expires: 7 });
+          }
 
           // 需要设置密码
-          if (response.data.info.initPwd === true) {
+          if (info && info.initPwd === true) {
             navigate("resetPassword", {
               state: {
                 sessionid: response.headers.ssessionid,
-                accountId: Number(response.data.userInfo.operatorId),
+                accountId: Number(userInfo.operatorId),
               },
             });
             return;
           }
           // 成功登录
-          else if (response.data && response.data.userInfo) {
+          else if (userInfo) {
             // 登录成功，存储 token 和 sessionId
-            Cookies.set('token', '0', { expires: 7 });
-            Cookies.set('sessionId', response.headers['ssessionid'], { expires: 7 });
+            if (authToken) {
+              Cookies.set('token', authToken, { expires: 7 });
+            }
+            if (sessionId) {
+              Cookies.set('sessionId', sessionId, { expires: 7 });
+            }
             setDisabled(false);
             sessionStorage.removeItem("validateCode");
             window.location.reload();

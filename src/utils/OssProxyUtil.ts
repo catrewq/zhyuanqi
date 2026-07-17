@@ -25,6 +25,10 @@ class OssProxy {
 
 
 
+
+export function shouldBypassOssSignature(uri: string): boolean {
+    return /^(https?:|data:|blob:)/i.test(uri || "");
+}
 async function getOssClient() {
     const info: string | null = sessionStorage.getItem("__sys_oss_client_info");
 
@@ -70,16 +74,25 @@ function getUrls(uris: string[]): Promise<string[]> {
 
     return new Promise(async function (resolve, reject) {
 
-        const ossClient = await getOssClient();
-
-        if (ossClient === null) {
-            reject("oss client error");
-        }
-
+        let ossClient: any = null;
         let urls: string[] = [];
 
         for (let index = 0; index < uris.length; index++) {
             const uri = uris[index];
+
+            if (shouldBypassOssSignature(uri)) {
+                urls.push(uri);
+                continue;
+            }
+
+            if (ossClient === null) {
+                ossClient = await getOssClient();
+            }
+
+            if (ossClient === null) {
+                reject("oss client error");
+                return;
+            }
 
             const url: string = await ossClient.signatureUrl(uri, {
                 "content-disposition": `attachment; filename=${encodeURIComponent(
@@ -90,7 +103,7 @@ function getUrls(uris: string[]): Promise<string[]> {
             urls.push(url);
         }
         
-        // 获取url
+        // 鑾峰彇url
         if (urls) {
             resolve(urls);
         } else {
@@ -110,10 +123,9 @@ function getUrl(uri: string): Promise<string> {
 
     return new Promise(async function (resolve, reject) {
 
-        const ossClient = await getOssClient();
-
-        if (ossClient === null) {
-            reject("oss client error");
+        if (shouldBypassOssSignature(uri)) {
+            resolve(uri);
+            return;
         }
 
         let uris: string[] = [uri];

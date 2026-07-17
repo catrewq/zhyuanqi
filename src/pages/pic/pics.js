@@ -283,6 +283,21 @@ const PhotoGallery = () => {
   const detectFileType = (url) => {
     // 1. 移除URL中的查询参数和哈希
     const cleanUrl = url.split(/[?#]/)[0];
+    let hostname = '';
+    try {
+      hostname = new URL(url).hostname;
+    } catch (e) {
+      hostname = '';
+    }
+
+    if (hostname.includes('picsum.photos')) {
+      return {
+        isAudio: false,
+        isVideo: false,
+        isImage: true,
+        extension: 'jpg'
+      };
+    }
 
     // 2. 解码URL编码字符（如%20等）
     const decodedUrl = decodeURIComponent(cleanUrl);

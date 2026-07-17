@@ -44,7 +44,6 @@ const CustomTable = React.forwardRef(({ url, columns, crumbs, searchForm, render
     let obj = getPostData(form),
       postData = {
         ...obj,
-        ...pages,
         // roleId: roleId,
       };
     console.log(postData);
@@ -58,10 +57,14 @@ const CustomTable = React.forwardRef(({ url, columns, crumbs, searchForm, render
       const length = pages.limit;
       fetchList(start, length, url, postData)
         .then((response) => {
-          const { count } = response.data;
-          // 避免查询空格时，返回的数据不是数组
-          if (Array.isArray(response?.data?.data)) {
-            setData(response?.data);
+          const responseBody = response?.data;
+          const payload = Array.isArray(responseBody?.data)
+            ? responseBody
+            : responseBody?.data;
+          const count = payload?.count || 0;
+
+          if (Array.isArray(payload?.data)) {
+            setData(payload);
           }
           setLoading(false);
           setPages({

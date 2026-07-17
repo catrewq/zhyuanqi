@@ -87,7 +87,7 @@ function Detail() {
         delete postData.newPasswordOK;
         console.log(postData);
         await axios({
-            url: "/system/account/user/pwd/update",
+            url: "/account/user/pwd/update",
             method: "put",
             headers: {
                 "Content-Type": "application/json",

@@ -15,7 +15,6 @@
     "@types/js-cookie": "^3.0.6",
     "@types/node": "^20.14.0",
     "@types/react": "^18.3.3",
-    "@types/js-cookie": "^3.0.6",
     "ali-oss": "^6.21.0",
     "antd": "^5.18.1",
     "axios": "^1.7.5",
@@ -31,6 +30,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-excel-renderer": "^1.1.0",
+    "react-photo-view": "^1.2.7",
     "react-player": "^2.16.0",
     "react-quill": "^2.0.0",
     "react-router-dom": "^6.23.1",
@@ -39,7 +39,7 @@
     "use-antd-resizable-header": "^2.9.5",
     "web-vitals": "^4.1.1"
   },
-  "proxy": "https://hroapitest.zanhua.com.cn",
+  "proxy": "http://127.0.0.1:8080",
   "scripts": {
     "start": "craco start",
     "build": "dotenv -e .env.prod craco build",
@@ -69,6 +69,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "webpack-bundle-analyzer": "^4.10.2"
   }
 }
