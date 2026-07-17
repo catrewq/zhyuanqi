@@ -1,0 +1,74 @@
+{
+  "name": "yqsl",
+  "version": "0.9.1",
+  "private": true,
+  "dependencies": {
+    "@ant-design/charts": "^2.1.1",
+    "@ant-design/icons": "^5.3.7",
+    "@ant-design/pro-components": "^2.7.10",
+    "@craco/craco": "^7.1.0",
+    "@sideway/address": "^5.0.0",
+    "@testing-library/jest-dom": "^6.4.6",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/jest": "^29.5.12",
+    "@types/js-cookie": "^3.0.6",
+    "@types/node": "^20.14.0",
+    "@types/react": "^18.3.3",
+    "@types/js-cookie": "^3.0.6",
+    "ali-oss": "^6.21.0",
+    "antd": "^5.18.1",
+    "axios": "^1.7.5",
+    "craco-less": "^3.0.1",
+    "dotenv-cli": "^7.4.2",
+    "file-saver": "^2.0.5",
+    "js-cookie": "^3.0.5",
+    "moment": "^2.30.1",
+    "number-precision": "^1.6.0",
+    "qrcode.react": "^3.1.0",
+    "qs": "^6.12.1",
+    "rc-queue-anim": "^2.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-excel-renderer": "^1.1.0",
+    "react-player": "^2.16.0",
+    "react-quill": "^2.0.0",
+    "react-router-dom": "^6.23.1",
+    "react-svg": "^16.1.34",
+    "redux-thunk": "^3.1.0",
+    "use-antd-resizable-header": "^2.9.5",
+    "web-vitals": "^4.1.1"
+  },
+  "proxy": "https://hroapitest.zanhua.com.cn",
+  "scripts": {
+    "start": "craco start",
+    "build": "dotenv -e .env.prod craco build",
+    "build:test": "dotenv -e .env.test craco build",
+    "build:uat": "dotenv -e .env.uat craco build",
+    "build:uat2": "dotenv -e .env.uat2 craco build",
+    "test": "craco test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version",
+      "last 1 edge version"
+    ]
+  },
+  "devDependencies": {
+    "webpack-bundle-analyzer": "^4.10.2"
+  }
+}

@@ -1,0 +1,428 @@
+@import '../styles/vars.less';
+@import '../styles/font.less';
+
+.wrapper {
+  min-height: 98vh;
+  padding: 0 3px 3px;
+  background: white;
+
+  .common-header {
+    position: fixed;
+    top: 0;
+    z-index: 9;
+    right: 0;
+    left: 0;
+    display: flex;
+    height: 60px;
+    padding: 0;
+    //background: #fff;
+    background: linear-gradient(90deg, #EAF9F2 0%, #E3FCEF 50%, #B5ECEE 100%);
+
+    // .logo {
+    //   position: fixed;
+    //   top: 6px;
+    //   left: 16px;
+    //   width: 100px;
+    //   /* 修改宽度 */
+    //   height: 28px;
+    //   /* 修改高度 */
+    //   background-image: url('../assets/images/logo.svg');
+    //   background-size: contain;
+    //   /* 保持图片的原始比例 */
+    //   background-repeat: no-repeat;
+    //   z-index: 1;
+    // }
+
+    .logo {
+      width: 246px;
+      height: 60px;
+      margin: 0 12px;
+      padding-top: 20px;
+      padding-left: 18px;
+
+      b {
+        display: inline-block;
+        width: 23px;
+        height: 23px;
+        line-height: 23px;
+        background: #00b781;
+        border-radius: 4px;
+        color: #fff;
+        font-size: 18px;
+        text-align: center;
+        vertical-align: top;
+      }
+
+      span {
+        display: inline-block;
+        height: 23px;
+        line-height: 23px;
+        margin-left: 8px;
+        color: #86909c;
+        font-size: 18px;
+        font-weight: 500;
+        vertical-align: top;
+      }
+    }
+
+    .breadcrumbs {
+      display: flex;
+      align-items: center;
+      // margin-left: 12px;
+      margin-left: 236px;
+      z-index: 2;
+      /* 添加z-index属性 */
+
+      li {
+        color: #86909c;
+
+        &:last-child {
+          color: #86909c;
+        }
+
+        .ant-breadcrumb-separator {
+          color: #86909c;
+        }
+
+        .anticon {
+          color: #86909c;
+          transition: all 0.2s ease;
+
+          &:hover {
+            color: @primary;
+          }
+        }
+
+        a {
+          color: #86909c;
+        }
+      }
+    }
+
+    .userinfo {
+      position: absolute;
+      top: 0;
+      right: 12px;
+      display: flex;
+      align-items: center;
+      height: 60px;
+      line-height: 60px;
+
+      .name {
+        margin-right: 12px;
+        color: #86909c;
+      }
+
+      .anticon {
+        margin: 0;
+        padding: 6px;
+        color: #86909c;
+        transition: all 0.2s ease;
+
+        &:hover {
+          color: @primary;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+  .main-container {
+    background: none;
+    margin: 60px 0 0 0;
+    display: flex;
+    flex-direction: row;
+    //font-family: "ali_ph";
+
+    .sider-menu {
+      //position: fixed;
+      //top: 60px;
+      bottom: 0;
+      z-index: 10;
+      background: none;
+
+      .icon {
+        width: 16px;
+        height: 16px;
+
+        svg {
+          display: block;
+          width: 16px;
+          height: 16px;
+        }
+
+        &+.ant-menu-title-content {
+          margin-left: 16px;
+
+          color: #1f1f1f;
+          //font-family: "ali_ph";
+          font-size: 14px;
+          font-style: normal;
+          font-weight: 55 Regular;
+          line-height: 20px;
+
+        }
+      }
+
+      .ant-layout-sider-children>.ant-menu {
+        height: calc(100% - 12px);
+        padding: 16px 0;
+        border: 2px solid @border;
+        overflow-y: auto;
+      }
+
+      .ant-layout-sider-children>.z-sider-menu-container>.z-sider-menu-left>.ant-menu {
+        height: calc(100% - 12px);
+        padding: 16px 0;
+        border: 2px solid @border;
+        overflow-y: auto;
+      }
+
+      // .ant-menu {
+      //   height 100%;
+      // }
+
+      .ant-menu-submenu-open {
+
+        .ant-menu-submenu-title {
+          height: 54px;
+          line-height: 54px;
+          //background: rgba(@primary, 0.07);
+          margin: 0;
+          color: #172b4d;
+          font-size: 14px;
+          font-weight: 700;
+        }
+
+        .icon svg path {
+          fill: @primary;
+        }
+
+        li .ant-menu-title-content {
+          padding-left: 8px;
+        }
+
+        .ant-menu-sub.ant-menu-inline {
+          background: none;
+        }
+      }
+
+      .ant-menu-submenu,
+      .ant-menu-submenu-inline {
+        margin: 0 4px;
+        color: #172b4d;
+
+        .sub-menu-checked {
+          // color: @font;
+          //font-weight: bold;
+          // background-color: rgba(@gray, 0.07);
+          color: #35b681;
+          font-size: 14px;
+          font-style: normal;
+          font-weight: 65 Medium;
+          line-height: 20px;
+          //font-family: "ali_ph";
+
+          background-color: #E6F8F0;
+        }
+
+        .sub-menu-unchecked {
+          color: @font;
+          //font-family: "ali_ph";
+
+          background-color: rgb(255, 255, 255);
+        }
+
+      }
+
+      .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+        background: none;
+        color: #212529;
+        font-weight: 500;
+      }
+
+      .ant-menu-vertical .ant-menu-item::after,
+      .ant-menu-vertical-left .ant-menu-item::after,
+      .ant-menu-vertical-right .ant-menu-item::after,
+      .ant-menu-inline .ant-menu-item::after {
+        border-right: none;
+      }
+
+      .ant-layout-sider-trigger {
+        padding-left: 24px;
+        border-top: 1px solid #f0f0f0;
+        text-align: left;
+
+        svg {
+          transition: all 0.2s ease;
+        }
+
+        &:hover svg {
+          fill: @primary;
+        }
+      }
+
+      .z-sider-menu-container {
+
+        height: 100%;
+
+        // min-height: max-content;
+        display: flex;
+
+        .z-sider-menu-left {
+          //flex: 0 0 6px;
+          width: calc(100% - 6px);
+
+        }
+
+        .z-sider-menu-right {
+          display: flex;
+          flex: 0 0 12px;
+          justify-content: center;
+          align-items: center;
+          margin: 0 0 0 0;
+          background-color: rgb(248, 248, 248);
+
+          .z-sider-menu-slide {
+            margin-left: auto;
+            margin-right: auto;
+          }
+
+          .z-sider-menu-slide-btn {
+            margin: 0;
+            padding: 0;
+            width: 16px;
+            height: 66px;
+          }
+
+        }
+
+      }
+
+    }
+
+    .sider-menu-container {
+      flex: 1;
+    }
+
+    // tab 页面去除标题下方的间隙
+    .pagetabs {
+      margin: 0;
+      padding: 0;
+      width: calc(100% - 220px);
+
+      // 多标签页tabs 标题颜色
+      .ant-tabs .ant-tabs-tab {
+
+        &.ant-tabs-tab-active .ant-tabs-tab-btn,
+        &:hover .ant-tabs-tab-btn {
+          color: @primary;
+        }
+      }
+
+      .ant-tabs-tab {
+
+        background: white;
+
+        color: #1f1f1f;
+        text-align: center;
+        //font-family: "ali_ph";
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 55 Regular;
+
+      }
+
+      // tab 页签active
+      .ant-tabs-tab-active {
+        border-radius: 8px 8px 0 0;
+        background: linear-gradient(90deg, #eaf9f280 0%, #e3fcef80 50%, #b5ecee80 100%);
+
+        color: #35b681;
+        //font-family: "ali_ph";
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 65 Medium;
+
+      }
+
+      .ant-tabs-top {
+        .ant-tabs-nav {
+          margin-bottom: 0;
+        }
+
+        .common-search {
+          border-top: 3;
+        }
+
+        .detail-page {
+          section {
+            border-top-width: 0;
+          }
+        }
+
+      }
+    }
+
+    // Tab内部限制在页面85%滚动条 
+    .z-tab-panel-frame {
+      overflow: auto;
+      min-height: 50vh;
+      max-height: 85vh;
+    }
+
+  }
+}
+
+.Layout-modal {
+  .password-modal {
+    .ant-modal-content {
+      border-radius: 6px;
+    }
+
+    .ant-modal-header {
+      // padding: 11px 16px;
+      border-bottom-color: #f2f2f2;
+      border-radius: 6px 6px 0 0;
+    }
+
+    .ant-modal-title {
+      font-weight: normal;
+    }
+
+    .ant-form-item {
+      margin-bottom: 8px;
+    }
+
+    .ant-form-item-label {
+      line-height: 22px;
+    }
+
+    .ant-alert {
+      margin-bottom: 12px;
+    }
+
+    .foot {
+      padding-top: 16px;
+      text-align: right;
+
+      .ant-btn-primary {
+        margin-left: 8px;
+
+        &:hover {
+          color: #fff;
+          background-color: @primary;
+          border-color: @primary;
+        }
+      }
+    }
+  }
+}
+
+.x-Data-Frame-Old {
+  overflow: auto;
+  max-height: 100vh;
+  width: calc(100% - 28px);
+
+
+}
