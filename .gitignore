@@ -1,3 +1,15 @@
 build/**
 node_modules/**
 package-lock.json
+
+# IDE
+.idea/
+*.iml
+
+# Java 编译产物
+target/
+*.class
+
+# OS
+.DS_Store
+Thumbs.db
