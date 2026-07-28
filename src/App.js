@@ -116,4 +116,8 @@ const App = () => {
 export default App;"// test timestamp marker - safe to remove"  
 "// ½Å±¾SubmitSelf²âÊÔ"  
 "// [½Å±¾Á÷³Ì] SubmitSelf ÑéÖ¤" 
+<<<<<<< HEAD
 "// DEVÌØÓĞ¸Ä¶¯ - ³åÍ»²âÊÔ"  
+=======
+"// MASTERÌØÓĞ¸Ä¶¯ - ³åÍ»²âÊÔ"  
+>>>>>>> 94d06f5 (conflict-test: masteræ”¹åŠ¨-åˆå…¥ä¼šå†²çª)
